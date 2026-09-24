@@ -357,13 +357,17 @@ export default function CapturePage() {
 
   const AFFIRMATIONS = [
     "You are doing great.",
-    "Breathe in. Breathe out.",
-    "Let your feelings flow.",
-    "This moment is yours.",
-    "You are enough.",
-    "Be gentle with yourself.",
-    "It's okay to feel this way.",
-    "You are not alone.",
+    "Breathe in… breathe out…",
+    "Let your feelings flow freely.",
+    "This moment belongs to you.",
+    "You are enough, just as you are.",
+    "Be gentle with yourself today.",
+    "It's okay to feel what you feel.",
+    "You are not alone in this.",
+    "Every emotion is valid.",
+    "Stillness is strength.",
+    "You deserve this pause.",
+    "Let this wash over you.",
   ];
 
   const handleFinish = () => {
@@ -507,13 +511,13 @@ export default function CapturePage() {
 
       <div className="relative flex h-[calc(100vh-68px)] flex-col px-5 pt-4 pb-4">
         <motion.h1 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease }} className="font-display text-[24px] font-bold tracking-tight">
-          Let&apos;s see where you are.
+          Notice how you feel, before it becomes too much.
         </motion.h1>
         <p className="mt-1 max-w-[640px] text-[13px] text-white/55">
-          Look into the camera for a moment, or set it yourself below.
+          Look into the camera for a moment — or adjust the sliders yourself.
         </p>
 
-        <div className={`mt-3 flex-1 overflow-hidden rounded-[26px] border border-white/[0.08] bg-[#070c18] ${done ? "" : "grid"}`} style={!done ? { gridTemplateColumns: panelOpen ? "300px 1fr" : "0px 1fr" } : undefined}>
+        <div className={`mt-3 flex-1 overflow-hidden rounded-[26px] border border-white/[0.08] bg-[#070c18] ${done ? "flex flex-col" : "grid"}`} style={!done ? { gridTemplateColumns: panelOpen ? "300px 1fr" : "0px 1fr" } : undefined}>
           <AnimatePresence initial={false}>
             {!done && panelOpen && (
               <motion.aside key="panel" initial={{ opacity: 0, x: -18 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.3, ease: "easeOut" }} className="overflow-y-auto border-r border-white/[0.07] p-4">
@@ -521,10 +525,10 @@ export default function CapturePage() {
                   <video ref={videoRef} muted playsInline className="absolute inset-0 h-full w-full object-cover" />
                   <canvas ref={overlayRef} className="absolute inset-0 h-full w-full" />
                   {!started && (
-                    <p className="relative px-8 text-center text-[12px] leading-relaxed text-white/70">
+                    <p className="relative px-6 text-center text-[12px] leading-relaxed text-white/60">
                       Your camera will appear here
                       <br />
-                      once you press Start
+                      <span className="text-teal-200/80">Press Start when you&apos;re ready</span>
                     </p>
                   )}
                 </div>
@@ -585,9 +589,9 @@ export default function CapturePage() {
             <AnimatePresence mode="wait">
               {!started && !done && (
                 <motion.div key="idle" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3, ease: "easeOut" }} className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-8 text-center">
-                  <h2 className="text-[22px] font-extrabold">Waiting for you to start!</h2>
+                  <h2 className="text-[22px] font-extrabold">Take a moment. Just breathe.</h2>
                   <p className="mt-2 max-w-[400px] text-[13px] text-white/55">
-                    Focus on your breath and let yourself flow along with the animation.
+                    When you&apos;re ready, press Start on the left — let the art reflect how you feel.
                   </p>
                   <p className="mt-2 text-[11px] text-white/35">{status}</p>
                 </motion.div>
@@ -596,22 +600,22 @@ export default function CapturePage() {
               {done && (
                 <motion.div key="done" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.35, ease: "easeOut" }} className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 px-8 text-center">
                   <button onClick={handleBack} className="absolute left-4 top-4 flex h-9 w-9 items-center justify-center rounded-xl border border-white/15 bg-white/5 text-white/70 transition hover:bg-white/15" aria-label="Back to controls">›</button>
-                  <h2 className="text-[26px] font-extrabold drop-shadow-[0_2px_18px_rgba(0,0,0,0.7)]">Good, let this stay with you!</h2>
+                  <h2 className="text-[26px] font-extrabold drop-shadow-[0_2px_18px_rgba(0,0,0,0.7)]">Beautiful. Hold on to this feeling.</h2>
                   <p className="mt-2 max-w-[480px] text-[14px] text-white/70">
-                    Focus on your breath and let yourself flow along with the animation.
+                    You just made space for yourself — that takes real courage. Save it, share it, or simply carry it forward.
                   </p>
                   <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
                     <Link href="/talk-exercises" onClick={() => handleSave()} className="rounded-full bg-gradient-to-r from-teal-300 to-blue-500 px-6 py-3 text-[14px] font-bold text-black shadow-[0_10px_40px_-10px_rgba(45,212,191,0.7)] transition hover:opacity-90">
-                      Done! let&apos;s talk with EMO
+                      Talk with EMO
                     </Link>
                     <Link href="/community" onClick={() => handleSave()} className="rounded-full border border-white/10 bg-black/50 px-6 py-3 text-[14px] font-semibold text-white/80 backdrop-blur transition hover:bg-white/10">
-                      Proceed
+                      See Community
                     </Link>
                     <button onClick={handleShareReport} className="rounded-full border border-teal-300/40 bg-teal-400/10 px-6 py-3 text-[14px] font-bold text-teal-200 backdrop-blur transition hover:bg-teal-400/20">
                       Share Report Card
                     </button>
                   </div>
-                  {saved && <p className="mt-3 text-[12.5px] text-teal-200">Valence {valence.toFixed(1)} · Energy {arousal.toFixed(1)} saved locally & downloaded.</p>}
+                  {saved && <p className="mt-3 text-[12.5px] text-teal-200">Valence {valence.toFixed(1)} · Energy {arousal.toFixed(1)} — saved ✓</p>}
                 </motion.div>
               )}
             </AnimatePresence>

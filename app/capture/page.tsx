@@ -619,10 +619,10 @@ export default function CapturePage() {
                       Done! let&apos;s talk with EMO
                     </Link>
                     <Link href="/community" onClick={() => handleSave()} className="rounded-full border border-white/10 bg-black/50 px-6 py-3 text-[14px] font-semibold text-white/80 backdrop-blur transition hover:bg-white/10">
-                      Proceed
+                      Save today&apos;s check-in
                     </Link>
-                    <button onClick={handleShareReport} className="rounded-full border border-teal-300/40 bg-teal-400/10 px-6 py-3 text-[14px] font-bold text-teal-200 backdrop-blur transition hover:bg-teal-400/20">
-                      Share Report Card
+                    <button onClick={handleBack} className="rounded-full border border-white/10 bg-transparent px-6 py-3 text-[14px] font-semibold text-white/70 backdrop-blur transition hover:bg-white/5">
+                      Try again
                     </button>
                   </div>
                   {saved && <p className="mt-3 text-[12.5px] text-teal-200">Valence {valence.toFixed(1)} · Energy {arousal.toFixed(1)} — saved ✓</p>}

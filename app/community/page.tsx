@@ -79,10 +79,17 @@ function Art({ art, className = "" }: { art: string; className?: string }) {
 export default function CommunityPage() {
   const [selected, setSelected] = useState<Post | null>(null);
   const [liked, setLiked] = useState<Record<string, boolean>>({ ishaan: false });
+  const [gallerySaved, setGallerySaved] = useState<Record<string, boolean>>({});
   const [savedMain, setSavedMain] = useState(false);
   const [feed, setFeed] = useState<Post[]>(posts);
 
   useEffect(() => {
+    try {
+      const g = localStorage.getItem("emo_gallery");
+      if (g) setGallerySaved(JSON.parse(g));
+      setSavedMain(localStorage.getItem("emo_main_saved") === "true");
+    } catch {}
+    
     fetch("/api/posts")
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
@@ -142,7 +149,11 @@ export default function CommunityPage() {
             <Art art={feed[0].art} className="h-[240px] rounded-2xl border border-white/10" />
             <div className="mt-4 grid grid-cols-2 gap-2.5">
               <button
-                onClick={() => setSavedMain((s) => !s)}
+                onClick={() => {
+                  const next = !savedMain;
+                  setSavedMain(next);
+                  localStorage.setItem("emo_main_saved", String(next));
+                }}
                 className={`inline-flex items-center justify-center gap-2 rounded-full border border-white/12 py-2.5 text-[13.5px] font-semibold transition ${savedMain ? "bg-teal-300 text-black" : "bg-white/[0.07] hover:bg-white/[0.14]"}`}
               >
                 <Bookmark className="h-4 w-4" /> {savedMain ? "In Gallery" : "Gallery"}
@@ -276,9 +287,23 @@ export default function CommunityPage() {
                     {selected.name} — “{selected.quote}”
                   </p>
                 </div>
-                <button onClick={() => setSelected(null)} className="rounded-full p-1.5 text-white/50 transition hover:bg-white/10 hover:text-white" aria-label="Close">
-                  <X className="h-4 w-4" />
-                </button>
+                <div className="flex items-center gap-2">
+                  <button 
+                    onClick={() => {
+                      setGallerySaved(prev => {
+                        const next = { ...prev, [selected.id]: !prev[selected.id] };
+                        localStorage.setItem("emo_gallery", JSON.stringify(next));
+                        return next;
+                      });
+                    }}
+                    className={`rounded-full px-3 py-1.5 text-[12px] font-bold transition ${gallerySaved[selected.id] ? "bg-teal-400/10 text-teal-200 border border-teal-300/40" : "bg-white/10 hover:bg-white/20"}`}
+                  >
+                    {gallerySaved[selected.id] ? "Saved ✓" : "Save"}
+                  </button>
+                  <button onClick={() => setSelected(null)} className="rounded-full p-1.5 text-white/50 transition hover:bg-white/10 hover:text-white" aria-label="Close">
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
               <div className="mt-5 grid grid-cols-2 gap-2.5">
                 {["Talk to them", "Try their exercise", "Guess their mood", "Share yours"].map((t) => (

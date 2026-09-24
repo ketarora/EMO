@@ -107,15 +107,15 @@ export default function TalkPage() {
   return (
     <main className="relative overflow-hidden">
       <div className="pointer-events-none absolute inset-0" aria-hidden>
-        <svg className="absolute left-1/2 top-[-20px] h-[320px] w-[1400px] -translate-x-1/2 opacity-40" viewBox="0 0 1400 320" fill="none">
+        <svg className="absolute left-1/2 top-[-20px] h-[320px] w-full -translate-x-1/2 opacity-25" viewBox="0 0 1400 320" fill="none" preserveAspectRatio="none">
           <path d="M-20 110 C 320 110, 450 20, 700 20 S 1100 110, 1420 250" stroke="#1e3a5f" strokeWidth="1.5" />
         </svg>
-        <div className="absolute -right-40 top-[-100px] h-[360px] w-[360px] rounded-full bg-purple-600/25 blur-[130px]" />
-        <div className="absolute right-[10%] top-[320px] h-[320px] w-[320px] rounded-full bg-teal-500/10 blur-[130px]" />
-        <div className="absolute -left-48 bottom-[-60px] h-[420px] w-[420px] rounded-full bg-blue-700/25 blur-[140px]" />
+        <div className="absolute -right-40 top-[-100px] h-[360px] w-[360px] rounded-full bg-purple-600/12 blur-[130px]" />
+        <div className="absolute right-[10%] top-[320px] h-[320px] w-[320px] rounded-full bg-teal-500/8 blur-[130px]" />
+        <div className="absolute -left-48 bottom-[-60px] h-[420px] w-[420px] rounded-full bg-blue-700/12 blur-[140px]" />
       </div>
 
-      <div className="relative mx-auto max-w-[928px] px-5 pb-20 pt-8">
+      <div className="relative px-6 pb-10 pt-6">
         <motion.h1 initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease }} className="text-[28px] font-bold tracking-tight">
           What would help right now?
         </motion.h1>

@@ -115,14 +115,14 @@ export default function CommunityPage() {
   return (
     <main className="relative overflow-hidden">
       <div className="pointer-events-none absolute inset-0" aria-hidden>
-        <svg className="absolute left-1/2 top-[-20px] h-[340px] w-[1400px] -translate-x-1/2 opacity-40" viewBox="0 0 1400 340" fill="none">
+        <svg className="absolute left-1/2 top-[-20px] h-[340px] w-full -translate-x-1/2 opacity-25" viewBox="0 0 1400 340" fill="none" preserveAspectRatio="none">
           <path d="M-20 120 C 320 120, 450 20, 700 20 S 1100 120, 1420 260" stroke="#1e3a5f" strokeWidth="1.5" />
         </svg>
-        <div className="absolute -right-40 top-[-100px] h-[360px] w-[360px] rounded-full bg-purple-600/25 blur-[130px]" />
-        <div className="absolute -left-48 bottom-[-60px] h-[420px] w-[420px] rounded-full bg-blue-700/25 blur-[140px]" />
+        <div className="absolute -right-40 top-[-100px] h-[360px] w-[360px] rounded-full bg-purple-600/12 blur-[130px]" />
+        <div className="absolute -left-48 bottom-[-60px] h-[420px] w-[420px] rounded-full bg-blue-700/12 blur-[140px]" />
       </div>
 
-      <div className="relative mx-auto max-w-[928px] px-5 pb-20 pt-8">
+      <div className="relative min-h-[calc(100vh-68px)] px-6 pb-6 pt-6">
         <motion.h1 initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease }} className="text-[28px] font-bold tracking-tight">
           Others feeling this right now.
         </motion.h1>
@@ -192,16 +192,15 @@ export default function CommunityPage() {
                 <Plus className="h-4 w-4" /> Add Exercise
               </button>
             </div>
-            <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-5">
+            <div className="mt-3 grid grid-cols-5 gap-3">
               {exercises.map((e, i) => (
                 <motion.div key={e.name} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: i * 0.06, ease }}>
-                  <button className={`grain relative block w-full overflow-hidden rounded-2xl bg-gradient-to-br ${e.cls} p-4 text-left text-black transition-transform hover:-translate-y-1`}>
+                  <button className={`grain relative block h-[80px] w-full overflow-hidden rounded-2xl bg-gradient-to-br ${e.cls} p-4 text-left text-black transition-transform hover:-translate-y-1`}>
                     <div className="relative text-[14px] font-bold leading-tight">{e.name}</div>
                     <div className="relative mt-0.5 text-[11.5px] text-black/70">{e.min}</div>
                   </button>
                 </motion.div>
-              ))}
-            </div>
+              ))}            </div>
 
             <div className="mt-6 flex items-start justify-between gap-4">
               <div>
@@ -213,7 +212,7 @@ export default function CommunityPage() {
               </button>
             </div>
 
-            <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="mt-3 grid grid-cols-2 gap-4 xl:grid-cols-3">
               {feed.map((p, i) => (
                 <motion.article
                   key={p.id}

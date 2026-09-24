@@ -78,34 +78,33 @@ h1, h2, h3, .font-display {
 }
 
 .hero-orb-glow {
-  background: radial-gradient(circle, rgba(34, 211, 238, 0.18) 0%, rgba(56, 100, 220, 0.10) 40%, transparent 70%);
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.10) 0%, rgba(56, 100, 220, 0.06) 40%, transparent 70%);
   animation: orb-pulse 4s ease-in-out infinite;
   pointer-events: none;
   z-index: 0;
 }
 
 .hero-orb-glow-inner {
-  background: radial-gradient(circle, rgba(34, 211, 238, 0.25) 0%, rgba(100, 180, 255, 0.12) 30%, transparent 60%);
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.14) 0%, rgba(100, 180, 255, 0.07) 30%, transparent 60%);
   animation: orb-pulse-inner 3s ease-in-out infinite;
   pointer-events: none;
   z-index: 0;
 }
 
 @keyframes orb-pulse {
-  0%, 100% { opacity: 0.6; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.08); }
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.05); }
 }
 
 @keyframes orb-pulse-inner {
-  0%, 100% { opacity: 0.7; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.05); }
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.03); }
 }
 
 .hero-orb-wrap > div:last-child {
   position: relative;
   z-index: 1;
   box-shadow:
-    0 0 60px rgba(34, 211, 238, 0.25),
-    0 0 120px rgba(56, 100, 220, 0.15),
-    inset 0 0 80px rgba(34, 211, 238, 0.08);
+    0 0 30px rgba(34, 211, 238, 0.12),
+    0 0 60px rgba(56, 100, 220, 0.08);
 }

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Script from "next/script";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronRight, Lock } from "lucide-react";
+import { ChevronLeft, ChevronRight, Lock } from "lucide-react";
 import Link from "next/link";
 import { EmoEngine } from "./EmoEngine";
 import prompts from "@/lib/emotion-prompts.json";
@@ -80,6 +80,8 @@ export default function CapturePage() {
   const [prompt, setPrompt] = useState("Focus on your breath and let yourself flow along with the animation.");
   const [saved, setSaved] = useState(false);
   const [photoData, setPhotoData] = useState<string | null>(null);
+  const [panelOpen, setPanelOpen] = useState(true);
+  const [affirmation, setAffirmation] = useState("");
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const overlayRef = useRef<HTMLCanvasElement>(null);
@@ -353,6 +355,17 @@ export default function CapturePage() {
     setStatus(d.modelReady ? "Stopped. Click Start." : "Stopped.");
   };
 
+  const AFFIRMATIONS = [
+    "You are doing great.",
+    "Breathe in. Breathe out.",
+    "Let your feelings flow.",
+    "This moment is yours.",
+    "You are enough.",
+    "Be gentle with yourself.",
+    "It's okay to feel this way.",
+    "You are not alone.",
+  ];
+
   const handleFinish = () => {
     if (videoRef.current) {
       const v = videoRef.current;
@@ -377,6 +390,18 @@ export default function CapturePage() {
     setDone(false);
     handleStop();
   };
+
+  // Start affirmation cycle when engine runs
+  useEffect(() => {
+    if (!started) { setAffirmation(""); return; }
+    let idx = 0;
+    setAffirmation(AFFIRMATIONS[0]);
+    const timer = setInterval(() => {
+      idx = (idx + 1) % AFFIRMATIONS.length;
+      setAffirmation(AFFIRMATIONS[idx]);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [started]);
 
   const handleShareReport = async () => {
     const canvas = document.createElement("canvas");
@@ -473,27 +498,26 @@ export default function CapturePage() {
       <Script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.23.0/dist/ort.min.js" strategy="afterInteractive" onLoad={() => { if (window.ort) window.ort.env.wasm.wasmPaths = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.23.0/dist/"; }} />
 
       <div className="pointer-events-none absolute inset-0" aria-hidden>
-        <svg className="absolute left-1/2 top-[-30px] h-[380px] w-[1400px] -translate-x-1/2 opacity-40" viewBox="0 0 1400 380" fill="none">
+        <svg className="absolute left-1/2 top-[-30px] h-[380px] w-full -translate-x-1/2 opacity-30" viewBox="0 0 1400 380" fill="none" preserveAspectRatio="none">
           <path d="M-20 120 C 320 120, 450 20, 700 20 S 1100 120, 1420 260" stroke="#1e3a5f" strokeWidth="1.5" />
         </svg>
-        <div className="absolute -right-40 top-[-100px] h-[360px] w-[360px] rounded-full bg-purple-600/25 blur-[130px]" />
-        <div className="absolute -left-48 bottom-[-80px] h-[420px] w-[420px] rounded-full bg-blue-700/25 blur-[140px]" />
+        <div className="absolute -right-40 top-[-100px] h-[360px] w-[360px] rounded-full bg-purple-600/15 blur-[130px]" />
+        <div className="absolute -left-48 bottom-[-80px] h-[420px] w-[420px] rounded-full bg-blue-700/15 blur-[140px]" />
       </div>
 
-      <div className="relative mx-auto max-w-[928px] px-5 pb-20 pt-8">
-        <motion.h1 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease }} className="font-display text-[28px] font-bold tracking-tight">
+      <div className="relative flex h-[calc(100vh-68px)] flex-col px-5 pt-4 pb-4">
+        <motion.h1 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease }} className="font-display text-[24px] font-bold tracking-tight">
           Let&apos;s see where you are.
         </motion.h1>
-        <p className="mt-1.5 max-w-[640px] text-[14px] text-white/55">
-          Look into the camera for a moment, or set it yourself below. Press Start to see the next state, right
-          below this one.
+        <p className="mt-1 max-w-[640px] text-[13px] text-white/55">
+          Look into the camera for a moment, or set it yourself below.
         </p>
 
-        <div className={`mt-5 overflow-hidden rounded-[26px] border border-white/[0.08] bg-[#070c18] ${done ? "" : "grid md:grid-cols-[320px_1fr]"}`}>
+        <div className={`mt-3 flex-1 overflow-hidden rounded-[26px] border border-white/[0.08] bg-[#070c18] ${done ? "" : "grid"}`} style={!done ? { gridTemplateColumns: panelOpen ? "300px 1fr" : "0px 1fr" } : undefined}>
           <AnimatePresence initial={false}>
-            {!done && (
-              <motion.aside key="panel" initial={{ opacity: 0, x: -18 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.3, ease: "easeOut" }} className="border-b border-white/[0.07] p-5 md:border-b-0 md:border-r">
-                <div className="relative flex h-[240px] items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-[#0a1122]">
+            {!done && panelOpen && (
+              <motion.aside key="panel" initial={{ opacity: 0, x: -18 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.3, ease: "easeOut" }} className="overflow-y-auto border-r border-white/[0.07] p-4">
+                <div className="relative flex h-[180px] items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-[#0a1122]">
                   <video ref={videoRef} muted playsInline className="absolute inset-0 h-full w-full object-cover" />
                   <canvas ref={overlayRef} className="absolute inset-0 h-full w-full" />
                   {!started && (
@@ -505,16 +529,16 @@ export default function CapturePage() {
                   )}
                 </div>
 
-                <div className="mt-4 grid grid-cols-2 gap-2.5">
-                  <button onClick={handleStart} disabled={!detRef.current.modelReady} className="rounded-full border border-white/15 bg-white/[0.07] py-2.5 text-[13.5px] font-semibold transition hover:bg-white/[0.14] disabled:opacity-50">
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  <button onClick={handleStart} disabled={!detRef.current.modelReady} className="rounded-full border border-white/15 bg-white/[0.07] py-2 text-[13px] font-semibold transition hover:bg-white/[0.14] disabled:opacity-50">
                     Start
                   </button>
-                  <button onClick={handleStop} className="rounded-full border border-white/15 bg-white/[0.07] py-2.5 text-[13.5px] font-semibold transition hover:bg-white/[0.14]">
+                  <button onClick={handleFinish} className="rounded-full border border-white/15 bg-white/[0.07] py-2 text-[13px] font-semibold transition hover:bg-white/[0.14]">
                     Stop
                   </button>
                 </div>
 
-                <div className="mt-5 space-y-5">
+                <div className="mt-4 space-y-4">
                   <Slider label="How pleasant does this feel?" hint="Try smiling to see this change" value={valence} display={`${valence.toFixed(1)} · ${valLabel(valence)}`} accent="linear-gradient(90deg,#a855f7,#22d3ee)"
                     onChange={(v) => { detRef.current.manualV = true; setValence(v); if (engineRef.current) engineRef.current.valence = v; }} />
                   <Slider label="How much energy is behind it?" hint="Move your hands a little to see this change" value={arousal} display={`${arousal.toFixed(1)} · ${arLabel(arousal)}`} accent="linear-gradient(90deg,#a855f7,#2dd4bf)"
@@ -543,23 +567,42 @@ export default function CapturePage() {
             )}
           </AnimatePresence>
 
-          <div className="relative min-h-[calc(100vh-140px)] flex-1 overflow-hidden">
+          <div className="relative flex-1 overflow-hidden">
+            {/* Chevron toggle for sidebar */}
+            {!done && (
+              <button
+                onClick={() => setPanelOpen((p) => !p)}
+                className="absolute left-2 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/60 text-white/70 backdrop-blur transition hover:bg-white/15"
+                aria-label="Toggle panel"
+              >
+                {panelOpen ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+              </button>
+            )}
             <div ref={stageRef} className="absolute inset-0 [&>canvas]:h-full [&>canvas]:w-full" />
+            {/* Affirmation text overlay */}
+            {started && !done && affirmation && (
+              <motion.p
+                key={affirmation}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.6 }}
+                className="pointer-events-none absolute bottom-6 left-0 right-0 text-center text-[18px] font-semibold text-white/70 drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]"
+              >
+                {affirmation}
+              </motion.p>
+            )}
             <AnimatePresence mode="wait">
               {!started && !done && (
                 <motion.div key="idle" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3, ease: "easeOut" }} className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-8 text-center">
-                  <h2 className="text-[26px] font-extrabold">Waiting for you to start!</h2>
-                  <p className="mt-2 max-w-[460px] text-[14px] text-white/55">
+                  <h2 className="text-[22px] font-extrabold">Waiting for you to start!</h2>
+                  <p className="mt-2 max-w-[400px] text-[13px] text-white/55">
                     Focus on your breath and let yourself flow along with the animation.
                   </p>
-                  <p className="mt-3 text-[12px] text-white/35">{status}</p>
+                  <p className="mt-2 text-[11px] text-white/35">{status}</p>
                 </motion.div>
               )}
-              {started && !done && (
-                <motion.button key="finish" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={handleFinish} className="absolute right-4 top-4 rounded-full border border-white/15 bg-black/50 px-5 py-2 text-[13px] font-semibold backdrop-blur transition hover:bg-white/10">
-                  Finish →
-                </motion.button>
-              )}
+              {/* Removed separate Finish button — Stop already triggers finish */}
               {done && (
                 <motion.div key="done" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.35, ease: "easeOut" }} className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 px-8 text-center">
                   <button onClick={handleBack} className="absolute left-4 top-4 flex h-9 w-9 items-center justify-center rounded-xl border border-white/15 bg-white/5 text-white/70 transition hover:bg-white/15" aria-label="Back to controls">›</button>
@@ -584,13 +627,6 @@ export default function CapturePage() {
             </AnimatePresence>
           </div>
         </div>
-
-        {done && (
-          <div className="mt-4 grid gap-2.5 rounded-2xl border border-white/[0.08] bg-[#070c18] p-4 sm:grid-cols-2 md:hidden">
-            <Slider label="Pleasant?" hint="Try smiling" value={valence} display={valLabel(valence)} accent="linear-gradient(90deg,#a855f7,#22d3ee)" onChange={(v) => { setValence(v); if (engineRef.current) engineRef.current.valence = v; }} />
-            <Slider label="Energy?" hint="Move hands" value={arousal} display={arLabel(arousal)} accent="linear-gradient(90deg,#a855f7,#2dd4bf)" onChange={(v) => { setArousal(v); if (engineRef.current) engineRef.current.arousal = v; }} />
-          </div>
-        )}
       </div>
 
       <style jsx global>{`

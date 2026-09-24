@@ -572,10 +572,14 @@ export default function CapturePage() {
             {!done && (
               <button
                 onClick={() => setPanelOpen((p) => !p)}
-                className="absolute left-2 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/60 text-white/70 backdrop-blur transition hover:bg-white/15"
+                className={`absolute top-1/2 z-10 -translate-y-1/2 flex items-center justify-center rounded-full backdrop-blur transition-all ${
+                  panelOpen
+                    ? "left-2 h-8 w-8 border border-white/15 bg-black/60 text-white/70 hover:bg-white/15"
+                    : "left-3 h-11 w-11 border-2 border-teal-300/50 bg-black/80 text-teal-200 shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:bg-teal-400/20 animate-pulse"
+                }`}
                 aria-label="Toggle panel"
               >
-                {panelOpen ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                {panelOpen ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-5 w-5" />}
               </button>
             )}
             <div ref={stageRef} className="absolute inset-0 [&>canvas]:h-full [&>canvas]:w-full" />

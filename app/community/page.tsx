@@ -3,62 +3,10 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Bookmark, Heart, Plus, Share, X } from "lucide-react";
+import { getGradient, Post, posts } from "../data/posts";
+import Orb3D from "../components/Orb3D";
 
 const ease = [0.22, 1, 0.36, 1] as const;
-
-type Post = {
-  id: string;
-  name: string;
-  quote: string;
-  art: string;
-  dot: string;
-  featured?: boolean;
-};
-
-const posts: Post[] = [
-  {
-    id: "ishaan",
-    name: "Ishaan",
-    quote: "grateful for everything today, thanks for asking",
-    art: "radial-gradient(circle at 50% 55%, rgba(94,234,212,.95) 0%, rgba(13,60,60,.9) 35%, rgba(4,10,18,.98) 72%)",
-    dot: "bg-teal-300",
-  },
-  {
-    id: "ritika",
-    name: "Ritika",
-    quote: "was a lot today but sitting with it now",
-    art: "radial-gradient(circle at 55% 45%, rgba(192,132,252,.9) 0%, rgba(60,10,80,.85) 38%, rgba(5,5,15,.98) 75%)",
-    dot: "bg-purple-400",
-  },
-  {
-    id: "devansh",
-    name: "Devansh",
-    quote: "small win, actually took a break at 3pm",
-    art: "radial-gradient(circle at 50% 55%, rgba(45,212,191,.9) 0%, rgba(8,40,38,.9) 40%, rgba(3,8,14,.98) 75%)",
-    dot: "bg-teal-400",
-  },
-  {
-    id: "ayesha",
-    name: "Ayesha",
-    quote: "not sure what this is, just logging it",
-    art: "radial-gradient(circle at 50% 60%, rgba(147,197,253,.9) 0%, rgba(20,40,90,.85) 42%, rgba(3,6,16,.98) 78%)",
-    dot: "bg-blue-400",
-  },
-  {
-    id: "kabir",
-    name: "Kabir",
-    quote: "good day, oddly calm",
-    art: "radial-gradient(circle at 50% 55%, rgba(125,211,252,.9) 0%, rgba(15,45,70,.88) 42%, rgba(3,7,15,.98) 76%)",
-    dot: "bg-sky-400",
-  },
-  {
-    id: "meher",
-    name: "Meher",
-    quote: "heavy morning, better by evening",
-    art: "radial-gradient(circle at 55% 55%, rgba(168,85,247,.9) 0%, rgba(50,15,80,.85) 42%, rgba(6,4,16,.98) 78%)",
-    dot: "bg-purple-500",
-  },
-];
 
 const exercises = [
   { name: "Breathing", min: "3 minutes", cls: "from-[#2dd4bf] to-[#60a5fa]" },
@@ -82,12 +30,38 @@ export default function CommunityPage() {
   const [gallerySaved, setGallerySaved] = useState<Record<string, boolean>>({});
   const [savedMain, setSavedMain] = useState(false);
   const [feed, setFeed] = useState<Post[]>(posts);
+  const [latestCheckin, setLatestCheckin] = useState<any>(null);
+  const [showAiBot, setShowAiBot] = useState(false);
+  const [aiChat, setAiChat] = useState<{ role: "ai" | "user"; text: string }[]>([
+    { role: "ai", text: "I reviewed your check-in report. You seem a bit stressed today. Are you feeling overwhelmed with work or something else?" }
+  ]);
+
+  const handleAiSend = (opt: string) => {
+    if (!opt) return;
+    setAiChat((prev) => [...prev, { role: "user", text: opt }]);
+    const userText = opt.toLowerCase();
+    
+    setTimeout(() => {
+      setAiChat((prev) => [
+        ...prev,
+        {
+          role: "ai",
+          text: userText.includes("calm") || userText.includes("help")
+            ? "Let's do a quick 3-minute grounding exercise. Look around you and mentally name 3 things you can see..."
+            : "I hear you. I'm noting this in your journal to help spot patterns later on. Take a deep breath.",
+        },
+      ]);
+    }, 800);
+  };
 
   useEffect(() => {
     try {
       const g = localStorage.getItem("emo_gallery");
       if (g) setGallerySaved(JSON.parse(g));
       setSavedMain(localStorage.getItem("emo_main_saved") === "true");
+      
+      const checks = JSON.parse(localStorage.getItem("emo_checkins") || "[]");
+      if (checks?.length) setLatestCheckin(checks[checks.length - 1]);
     } catch {}
     
     fetch("/api/posts")
@@ -100,6 +74,11 @@ export default function CommunityPage() {
 
   const toggleLike = async (id: string) => {
     setLiked((p) => ({ ...p, [id]: !p[id] }));
+    setGallerySaved((prev) => {
+      const next = { ...prev, [id]: true };
+      localStorage.setItem("emo_gallery", JSON.stringify(next));
+      return next;
+    });
     try {
       const res = await fetch("/api/posts", {
         method: "POST",
@@ -146,7 +125,13 @@ export default function CommunityPage() {
             transition={{ duration: 0.7, ease }}
             className="rounded-[24px] border border-white/[0.08] bg-[#131c3a]/90 p-4"
           >
-            <Art art={feed[0].art} className="h-[240px] rounded-2xl border border-white/10" />
+            {latestCheckin ? (
+              <div className="relative flex h-[240px] items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-[#00040e]">
+                <Orb3D size={320} valence={latestCheckin.valence} energy={latestCheckin.energy} />
+              </div>
+            ) : (
+              <Art art={feed[0].art} className="h-[240px] rounded-2xl border border-white/10" />
+            )}
             <div className="mt-4 grid grid-cols-2 gap-2.5">
               <button
                 onClick={() => {
@@ -156,7 +141,7 @@ export default function CommunityPage() {
                 }}
                 className={`inline-flex items-center justify-center gap-2 rounded-full border border-white/12 py-2.5 text-[13.5px] font-semibold transition ${savedMain ? "bg-teal-300 text-black" : "bg-white/[0.07] hover:bg-white/[0.14]"}`}
               >
-                <Bookmark className="h-4 w-4" /> {savedMain ? "In Gallery" : "Gallery"}
+                <Bookmark className="h-4 w-4" /> {savedMain ? "Saved ✓" : "Keep this"}
               </button>
               <button onClick={handleShare} className="inline-flex items-center justify-center gap-2 rounded-full border border-white/12 bg-white/[0.07] py-2.5 text-[13.5px] font-semibold transition hover:bg-white/[0.14]">
                 <Share className="h-4 w-4" /> Share
@@ -165,15 +150,15 @@ export default function CommunityPage() {
 
             <div className="mt-5 space-y-4">
               <div>
-                <div className="flex justify-between text-[11.5px] text-white/40"><span>Ease</span><span>64%</span></div>
+                <div className="flex justify-between text-[11.5px] text-white/40"><span>Ease</span><span>{latestCheckin ? ((latestCheckin.valence + 3) / 6 * 100).toFixed(0) : "64"}%</span></div>
                 <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-black/60">
-                  <motion.div initial={{ width: 0 }} animate={{ width: "64%" }} transition={{ duration: 1, ease }} className="h-full rounded-full bg-gradient-to-r from-teal-300 to-blue-500" />
+                  <motion.div initial={{ width: 0 }} animate={{ width: `${latestCheckin ? ((latestCheckin.valence + 3) / 6 * 100) : 64}%` }} transition={{ duration: 1, ease }} className="h-full rounded-full bg-gradient-to-r from-teal-300 to-blue-500" />
                 </div>
               </div>
               <div>
-                <div className="flex justify-between text-[11.5px] text-white/40"><span>Charge</span><span>38%</span></div>
+                <div className="flex justify-between text-[11.5px] text-white/40"><span>Charge</span><span>{latestCheckin ? ((latestCheckin.energy + 3) / 6 * 100).toFixed(0) : "38"}%</span></div>
                 <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-black/60">
-                  <motion.div initial={{ width: 0 }} animate={{ width: "38%" }} transition={{ duration: 1, delay: 0.15, ease }} className="h-full rounded-full bg-gradient-to-r from-purple-400 to-pink-400" />
+                  <motion.div initial={{ width: 0 }} animate={{ width: `${latestCheckin ? ((latestCheckin.energy + 3) / 6 * 100) : 38}%` }} transition={{ duration: 1, delay: 0.15, ease }} className="h-full rounded-full bg-gradient-to-r from-purple-400 to-pink-400" />
                 </div>
               </div>
             </div>
@@ -184,11 +169,11 @@ export default function CommunityPage() {
               mood today !
             </p>
             <div className="mt-4 space-y-2.5">
-              {["Talk to others!", "Ask AI Bot!", "Consult professional!"].map((t) => (
-                <button key={t} className="w-full rounded-xl bg-black/70 px-4 py-3 text-left text-[13.5px] font-medium transition hover:bg-black">
-                  {t}
-                </button>
-              ))}
+              <button className="w-full rounded-xl bg-black/70 px-4 py-3 text-left text-[13.5px] font-medium transition hover:bg-black">Talk to others!</button>
+              <button onClick={() => setShowAiBot(!showAiBot)} className="w-full flex items-center justify-between rounded-xl bg-black/70 px-4 py-3 text-[13.5px] font-bold text-teal-300 transition hover:bg-black">
+                Ask EMO AI Bot ✨
+              </button>
+              <button className="w-full rounded-xl bg-black/70 px-4 py-3 text-left text-[13.5px] font-medium transition hover:bg-black">Consult professional!</button>
             </div>
           </motion.aside>
 
@@ -231,10 +216,10 @@ export default function CommunityPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.55, delay: (i % 3) * 0.08, ease }}
-                  className={`overflow-hidden rounded-2xl border bg-[#0b1226] transition hover:-translate-y-1 hover:shadow-[0_18px_50px_-16px_rgba(56,189,248,0.35)] ${selected?.id === p.id ? "border-teal-300/70" : "border-white/[0.08]"}`}
+                  className={`flex flex-col overflow-hidden rounded-2xl border bg-[#0b1226] transition hover:-translate-y-1 hover:shadow-[0_18px_50px_-16px_rgba(56,189,248,0.35)] ${selected?.id === p.id ? "border-teal-300/70" : "border-white/[0.08]"}`}
                 >
-                  <button onClick={() => setSelected(p)} className="block w-full text-left">
-                    <div className="relative">
+                  <button onClick={() => setSelected(p)} className="flex w-full flex-1 flex-col text-left">
+                    <div className="relative w-full">
                       <Art art={p.art} className="h-[190px]" />
                       <span
                         onClick={(e) => { e.stopPropagation(); toggleLike(p.id); }}
@@ -244,9 +229,9 @@ export default function CommunityPage() {
                         <Heart className={`h-4 w-4 ${liked[p.id] ? "fill-rose-400 text-rose-400" : "text-white/80"}`} />
                       </span>
                     </div>
-                    <div className="p-4">
-                      <p className="min-h-[42px] text-[13.5px] leading-snug text-white/85">“{p.quote}”</p>
-                      <div className="mt-3 flex items-center gap-2">
+                    <div className="flex w-full flex-1 flex-col p-4">
+                      <p className="text-[13.5px] leading-snug text-white/85">“{p.quote}”</p>
+                      <div className="mt-auto pt-3 flex items-center gap-2">
                         <span className={`h-5 w-5 rounded-full ${p.dot} shadow-[0_0_14px_rgba(45,212,191,0.6)]`} />
                         <span className="text-[12.5px] text-white/50">{p.name}</span>
                       </div>
@@ -313,6 +298,53 @@ export default function CommunityPage() {
                 ))}
               </div>
             </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      {/* FLOATING AI BOT */}
+      <AnimatePresence>
+        {showAiBot && (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.3 }} className="fixed bottom-6 right-6 z-50 flex w-[320px] flex-col overflow-hidden rounded-[24px] border border-teal-500/30 bg-[#070b18]/95 shadow-[0_30px_90px_-20px_rgba(45,212,191,0.3)] backdrop-blur-3xl">
+            <div className="flex items-center justify-between border-b border-white/10 bg-black/40 p-4">
+              <div className="flex items-center gap-2">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-teal-400/20 text-[12px]">✨</span>
+                <h3 className="text-[14px] font-bold text-teal-300">EMO AI</h3>
+              </div>
+              <button onClick={() => setShowAiBot(false)} className="rounded-full p-1 text-white/50 transition hover:bg-white/10 hover:text-white"><X className="h-4 w-4" /></button>
+            </div>
+            <div className="flex-1 space-y-4 p-5 text-[13px] leading-relaxed text-white/85 flex flex-col overflow-y-auto max-h-[300px]">
+              {aiChat.map((msg, i) => (
+                <div key={i} className={`flex gap-2 ${msg.role === "user" ? "flex-row-reverse" : ""}`}>
+                  {msg.role === "ai" && <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-teal-400/20 text-[12px] mt-1">✨</span>}
+                  <p className={`rounded-2xl p-3.5 ${msg.role === "user" ? "bg-teal-500/20 text-teal-100 rounded-tr-sm" : "bg-white/5 rounded-tl-sm"}`}>
+                    {msg.text}
+                  </p>
+                </div>
+              ))}
+
+              {aiChat.length === 1 && (
+                <div className="pl-8">
+                  {latestCheckin && <div className="border border-white/10 bg-black/30 p-2.5 rounded-xl text-[11px] text-white/60 mb-2">Attached: Case #{Date.now().toString().slice(-4)} (Ease {((latestCheckin.valence + 3) / 6 * 100).toFixed(0)}%)</div>}
+                  <div className="flex flex-wrap gap-2">
+                    <button onClick={() => handleAiSend("Work stress")} className="rounded-full bg-teal-500/20 px-3 py-1.5 text-[12px] font-bold text-teal-200 transition hover:bg-teal-500/30">Work stress</button>
+                    <button onClick={() => handleAiSend("Help me calm down")} className="rounded-full bg-white/10 px-3 py-1.5 text-[12px] transition hover:bg-white/20">Help me calm down</button>
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="border-t border-white/10 bg-black/40 p-3 pt-2">
+               <input 
+                 type="text" 
+                 placeholder="Type a message..." 
+                 className="w-full rounded-full bg-white/5 px-4 py-2.5 text-[13px] outline-none placeholder:text-white/30 transition focus:bg-white/10"
+                 onKeyDown={(e) => {
+                   if (e.key === "Enter" && e.currentTarget.value.trim()) {
+                     handleAiSend(e.currentTarget.value.trim());
+                     e.currentTarget.value = "";
+                   }
+                 }}
+               />
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

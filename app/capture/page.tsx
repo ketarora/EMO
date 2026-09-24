@@ -407,91 +407,93 @@ export default function CapturePage() {
     return () => clearInterval(timer);
   }, [started]);
 
-  const handleShareReport = async () => {
-    const canvas = document.createElement("canvas");
-    canvas.width = 1080;
-    canvas.height = 1080;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+  const handleShareReport = async (): Promise<string | undefined> => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1080;
+      canvas.height = 1080;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) { resolve(undefined); return; }
 
-    ctx.fillStyle = "#080B12";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#080B12";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    const glCanvas = stageRef.current?.querySelector("canvas");
-    if (glCanvas) {
-      ctx.drawImage(glCanvas, 0, 0, 1080, 1080);
-    }
+      const glCanvas = stageRef.current?.querySelector("canvas");
+      if (glCanvas) {
+        const w = glCanvas.width;
+        const h = glCanvas.height;
+        const scale = Math.max(1080 / w, 1080 / h);
+        const dw = w * scale;
+        const dh = h * scale;
+        const dx = (1080 - dw) / 2;
+        const dy = (1080 - dh) / 2;
+        ctx.drawImage(glCanvas, dx, dy, dw, dh);
+      }
 
-    const grad = ctx.createLinearGradient(0, 0, 0, 1080);
-    grad.addColorStop(0, "rgba(8,11,18,0)");
-    grad.addColorStop(0.7, "rgba(8,11,18,0.85)");
-    grad.addColorStop(1, "rgba(8,11,18,1)");
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, 1080, 1080);
+      const grad = ctx.createLinearGradient(0, 0, 0, 1080);
+      grad.addColorStop(0, "rgba(8,11,18,0)");
+      grad.addColorStop(0.7, "rgba(8,11,18,0.85)");
+      grad.addColorStop(1, "rgba(8,11,18,1)");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 1080, 1080);
 
-    ctx.fillStyle = "#fff";
-    ctx.font = "bold 64px system-ui, sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("Today's EMO", 540, 680);
+      ctx.fillStyle = "#fff";
+      ctx.font = "bold 64px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("Today's EMO", 540, 680);
 
-    ctx.font = "bold 32px system-ui, sans-serif";
-    ctx.fillStyle = "#22d3ee";
-    ctx.fillText(`Valence: ${valence.toFixed(1)}`, 340, 760);
-    ctx.fillStyle = "#c084fc";
-    ctx.fillText(`Energy: ${arousal.toFixed(1)}`, 740, 760);
+      ctx.font = "bold 32px system-ui, sans-serif";
+      ctx.fillStyle = "#22d3ee";
+      ctx.fillText(`Valence: ${valence.toFixed(1)}`, 340, 760);
+      ctx.fillStyle = "#c084fc";
+      ctx.fillText(`Energy: ${arousal.toFixed(1)}`, 740, 760);
 
-    if (photoData) {
-      const img = new Image();
-      img.onload = () => {
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(540, 900, 110, 0, Math.PI * 2);
-        ctx.closePath();
-        ctx.clip();
-
-        const size = Math.min(img.width, img.height);
-        const sx = (img.width - size) / 2;
-        const sy = (img.height - size) / 2;
-        ctx.drawImage(img, sx, sy, size, size, 430, 790, 220, 220);
-        ctx.restore();
-
-        ctx.strokeStyle = "rgba(255,255,255,0.15)";
-        ctx.lineWidth = 6;
-        ctx.beginPath();
-        ctx.arc(540, 900, 110, 0, Math.PI * 2);
-        ctx.stroke();
-
-        const url = canvas.toDataURL("image/png");
+      const finishExport = () => {
+        const url = canvas.toDataURL("image/jpeg", 0.7); // Compress as JPEG
         const a = document.createElement("a");
         a.href = url;
-        a.download = `emo-report-${new Date().toISOString().split("T")[0]}.png`;
+        a.download = `emo-report-${new Date().toISOString().split("T")[0]}.jpg`;
         a.click();
+        resolve(url);
       };
-      img.src = photoData;
-    } else {
-      const url = canvas.toDataURL("image/png");
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `emo-report-${new Date().toISOString().split("T")[0]}.png`;
-      a.click();
-    }
+
+      if (photoData) {
+        const img = new Image();
+        img.onload = () => {
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(540, 900, 110, 0, Math.PI * 2);
+          ctx.closePath();
+          ctx.clip();
+
+          const size = Math.min(img.width, img.height);
+          const sx = (img.width - size) / 2;
+          const sy = (img.height - size) / 2;
+          ctx.drawImage(img, sx, sy, size, size, 430, 790, 220, 220);
+          ctx.restore();
+
+          ctx.strokeStyle = "rgba(255,255,255,0.15)";
+          ctx.lineWidth = 6;
+          ctx.beginPath();
+          ctx.arc(540, 900, 110, 0, Math.PI * 2);
+          ctx.stroke();
+          
+          finishExport();
+        };
+        img.src = photoData;
+      } else {
+        finishExport();
+      }
+    });
   };
 
   const handleSave = async () => {
     try {
-      const record = { date: new Date().toISOString(), valence: Math.round(clamp(valence, -3, 3)), energy: Math.round(clamp(arousal, -3, 3)) };
+      const imgUrl = await handleShareReport();
+      const record = { date: new Date().toISOString(), valence: Math.round(clamp(valence, -3, 3)), energy: Math.round(clamp(arousal, -3, 3)), image: imgUrl };
       const savedArr = JSON.parse(localStorage.getItem("emo_checkins") || "[]");
       savedArr.push(record);
       localStorage.setItem("emo_checkins", JSON.stringify(savedArr));
-
-      const canvas = stageRef.current?.querySelector("canvas");
-      if (canvas) {
-        const url = canvas.toDataURL("image/png");
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `emo-mood-${new Date().toISOString().split("T")[0]}.png`;
-        a.click();
-      }
     } catch {}
     setSaved(true);
   };

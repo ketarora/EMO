@@ -7,6 +7,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import Orb3D from "./components/Orb3D";
 import { ArrowRight } from "lucide-react";
+import { getGradient } from "./data/posts";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -44,6 +45,7 @@ const loggedDays = new Set(Object.keys(dayArt).map(Number));
 
 export default function Home() {
   const [currentDate, setCurrentDate] = useState({ month: "September", day: 21, daysInMonth: 30, offset: 0 });
+  const [latestCheckin, setLatestCheckin] = useState<any>(null);
 
   useEffect(() => {
     const d = new Date();
@@ -53,6 +55,11 @@ export default function Home() {
     const firstDay = new Date(d.getFullYear(), d.getMonth(), 1).getDay();
     const offset = (firstDay + 6) % 7; // Monday-based
     setCurrentDate({ month, day, daysInMonth, offset });
+
+    try {
+      const checks = JSON.parse(localStorage.getItem("emo_checkins") || "[]");
+      if (checks?.length) setLatestCheckin(checks[checks.length - 1]);
+    } catch {}
   }, []);
 
   return (
@@ -179,10 +186,14 @@ export default function Home() {
                         : "relative aspect-square rounded-[9px] bg-black/40 transition-colors hover:bg-white/[0.06] focus-visible:outline-2 focus-visible:outline-teal-300"
                   }
                 >
-                  {arts?.map((src, k) => (
-                    <Image key={k} src={src} alt="" fill sizes="120px" className="object-cover transition-transform duration-500 group-hover:scale-110" />
-                  ))}
-                  <span className={`absolute inset-0 flex items-center justify-center text-[30px] font-semibold ${loggedDays.has(n) ? "text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.85)]" : "text-[#5c6679]"}`}>
+                  {today && latestCheckin ? (
+                    <div className="absolute inset-0 transition-transform duration-500 group-hover:scale-110" style={{ background: getGradient(latestCheckin.valence, latestCheckin.energy) }} />
+                  ) : (
+                    arts?.map((src, k) => (
+                      <Image key={k} src={src} alt="" fill sizes="120px" className="object-cover transition-transform duration-500 group-hover:scale-110" />
+                    ))
+                  )}
+                  <span className={`absolute inset-0 flex items-center justify-center text-[30px] font-semibold ${loggedDays.has(n) || (today && latestCheckin) ? "text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.85)]" : "text-[#5c6679]"}`}>
                     {n}
                   </span>
                 </motion.button>

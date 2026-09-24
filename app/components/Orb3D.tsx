@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { EmoEngine } from "../capture/EmoEngine";
 
 /** Big 3D particle orb — mouse reactive, deep blue glow, professional look. */
-export default function Orb3D({ size = 340 }: { size?: number }) {
+export default function Orb3D({ size = 340, valence, energy }: { size?: number, valence?: number, energy?: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const engineRef = useRef<EmoEngine | null>(null);
   const [failed, setFailed] = useState(false);
@@ -31,22 +31,27 @@ export default function Orb3D({ size = 340 }: { size?: number }) {
     try {
       engine = new EmoEngine(el, 55000);
       engineRef.current = engine;
-      // Deep blue/teal color range — calm and professional
-      engine.valence = -1.2;
-      engine.arousal = -0.5;
-      engine.overrideColorA = "#22d3ee"; // Exact Cyan (emo logo)
-      engine.overrideColorB = "#0ea5e9"; // Sky blue 
-      // Gentle living drift, stays inside blue/teal presets
-      const drift = () => {
-        const t = (performance.now() - t0) / 1000;
-        if (engine) {
-          engine.valence = -1.2 + Math.sin(t * 0.25) * 0.45;
-          engine.arousal = -0.5 + Math.sin(t * 0.18 + 1) * 0.4;
-        }
+      if (valence !== undefined && energy !== undefined) {
+        engine.valence = valence;
+        engine.arousal = energy;
+        engine.start();
+      } else {
+        // Default floating blue orb for Home Page
+        engine.valence = -1.2;
+        engine.arousal = -0.5;
+        engine.overrideColorA = "#22d3ee";
+        engine.overrideColorB = "#0ea5e9";
+        const drift = () => {
+          const t = (performance.now() - t0) / 1000;
+          if (engine) {
+            engine.valence = -1.2 + Math.sin(t * 0.25) * 0.45;
+            engine.arousal = -0.5 + Math.sin(t * 0.18 + 1) * 0.4;
+          }
+          raf = requestAnimationFrame(drift);
+        };
+        engine.start();
         raf = requestAnimationFrame(drift);
-      };
-      engine.start();
-      raf = requestAnimationFrame(drift);
+      }
     } catch {
       setFailed(true);
     }

@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
+  <img src="public/favicon.ico" width="80" alt="EMO Logo" style="border-radius: 12px; margin-bottom: 8px;" />
+  <h1>EMO Application</h1>
+  <p><strong>A Next-Generation Emotional Intelligence & Visual Tracking Interface</strong></p>
+  
+  [![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org/)
+  [![Three.js](https://img.shields.io/badge/Three.js-WebGL-black)](https://threejs.org/)
+  [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+</div>
 
-## Getting Started
+<br/>
 
-First, run the development server:
+## 🌌 Overview
+EMO is a highly-interactive web application designed to help users track, understand, and share their emotional state natively in the browser. Utilizing biometric facial tracking and a dynamic WebGL particle engine, the platform transforms abstract human emotion into a fluid, responsive 3D visual language. 
 
+## ✨ Key Features
+- **Live Facial Tracking (`face-api.js` + WebAssembly):** Captures multi-point metrics natively in the client to determine Valence (Pleasantness) and Energy (Arousal) using zero server dependencies.
+- **WebGL Emotion Engine:** A custom physics-based `Three.js` particle orb that alters color gradients, physical bounds, and drift speeds dynamically based on your direct emotional inputs.
+- **Composite Report Cards:** A built-in Canvas generation tool that binds your webcam snapshot, emotion parameters, and visual sphere into one monolithic PNG for easy sharing.
+- **Dynamic Local Storage mapping:** Localized check-in tracking built into an interactive monthly flow calendar.
+- **Community Feeds:** Opt-in anonymous boards for observing global emotions in real-time.
+
+## 🛠️ Technology Stack
+- **Framework:** Next.js 14, React 18, TypeScript
+- **Styling & Animation:** Tailwind CSS, Framer Motion
+- **3D / Graphics:** Three.js, HTML5 Canvas API
+- **AI Processing:** `face-api.js`, ONNX Runtime Web
+
+## 🚀 Quick Start
 ```bash
+# Clone this repository
+git clone https://github.com/ketarora/EMO.git
+
+# Navigate into the project
+cd EMO
+
+# Install essential dependencies
+npm install
+
+# Spin up the development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🔒 Privacy & Architecture
+- **Zero-Server Tracking:** Facial analysis models are compressed securely onto the client. No images or streams are ever sent to an external server.
+- **Engine Control:** The core emotion physics engine is abstracted in `EmoEngine.ts`, which safely controls all rendering and dynamic parameter lerping without locking the main thread.

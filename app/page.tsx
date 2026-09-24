@@ -164,8 +164,9 @@ export default function Home() {
               const today = n === currentDate.day;
               const arts = dayArt[n] || (today && !dayArt[currentDate.day] ? dayArt[21] : undefined);
               return (
-                <Link key={n} href="/capture">
                 <motion.button
+                  key={n}
+                  onClick={() => { window.location.href = "/capture"; }}
                   initial={{ opacity: 0, scale: 0.94 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
@@ -185,7 +186,6 @@ export default function Home() {
                     {n}
                   </span>
                 </motion.button>
-                </Link>
               );
             })}
           </div>

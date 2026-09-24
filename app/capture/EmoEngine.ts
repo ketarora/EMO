@@ -205,7 +205,7 @@ export class EmoEngine {
   private colB = ["#349689","#4eb49c","#71be92","#9cc782","#E2e57a","#Fcf17c","#Fcf781"].map((c) => new THREE.Color(c));
 
   constructor(private el: HTMLElement, particles = 60000) {
-    this.renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: "high-performance", alpha: true });
+    this.renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: "high-performance", alpha: true, preserveDrawingBuffer: true });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.camera = new THREE.PerspectiveCamera(55, el.clientWidth / Math.max(1, el.clientHeight), 0.1, 200);

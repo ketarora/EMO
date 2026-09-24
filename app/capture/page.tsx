@@ -480,7 +480,7 @@ export default function CapturePage() {
         <div className="absolute -left-48 bottom-[-80px] h-[420px] w-[420px] rounded-full bg-blue-700/25 blur-[140px]" />
       </div>
 
-      <div className="relative mx-auto max-w-7xl px-5 pb-20 pt-8">
+      <div className="relative mx-auto max-w-[928px] px-5 pb-20 pt-8">
         <motion.h1 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease }} className="font-display text-[28px] font-bold tracking-tight">
           Let&apos;s see where you are.
         </motion.h1>

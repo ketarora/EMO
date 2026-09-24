@@ -15,7 +15,7 @@ export default function Nav() {
   const pathname = usePathname();
   return (
     <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#080B12]/70 backdrop-blur-md">
-      <div className="flex h-[68px] items-center justify-between px-8">
+      <div className="mx-auto flex h-[68px] max-w-[928px] items-center justify-between px-5">
         <Link href="/" className="flex items-center gap-2.5 transition-opacity hover:opacity-85">
           <span className="relative inline-flex h-7 w-7 items-center justify-center overflow-hidden rounded-full shadow-[0_0_22px_rgba(34,211,238,0.65)]">
             <Image src="/figma-home/v21_5778.png" alt="emo logo" fill className="object-cover" />

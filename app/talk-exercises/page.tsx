@@ -115,7 +115,7 @@ export default function TalkPage() {
         <div className="absolute -left-48 bottom-[-60px] h-[420px] w-[420px] rounded-full bg-blue-700/12 blur-[140px]" />
       </div>
 
-      <div className="relative px-6 pb-10 pt-6">
+      <div className="relative mx-auto max-w-[928px] px-5 pb-20 pt-8">
         <motion.h1 initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease }} className="text-[28px] font-bold tracking-tight">
           What would help right now?
         </motion.h1>

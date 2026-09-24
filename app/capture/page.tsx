@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Script from "next/script";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Lock } from "lucide-react";
+import { ChevronRight, Lock, X } from "lucide-react";
 import Link from "next/link";
 import { EmoEngine } from "./EmoEngine";
 import prompts from "@/lib/emotion-prompts.json";
@@ -517,10 +517,16 @@ export default function CapturePage() {
           Look into the camera for a moment — or adjust the sliders yourself.
         </p>
 
-        <div className={`mt-3 flex-1 overflow-hidden rounded-[26px] border border-white/[0.08] bg-[#070c18] ${done ? "flex flex-col" : "grid"}`} style={!done ? { gridTemplateColumns: panelOpen ? "300px 1fr" : "0px 1fr" } : undefined}>
+        <div className="relative mt-3 flex-1 overflow-hidden rounded-[26px] border border-white/[0.08] bg-[#070c18]">
           <AnimatePresence initial={false}>
             {!done && panelOpen && (
-              <motion.aside key="panel" initial={{ opacity: 0, x: -18 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.3, ease: "easeOut" }} className="overflow-y-auto border-r border-white/[0.07] p-4">
+              <motion.aside key="panel" initial={{ opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.3, ease: "easeOut" }} className="absolute bottom-4 left-4 top-4 z-20 w-[320px] overflow-y-auto rounded-[24px] border border-white/10 bg-[#0a1122]/95 p-5 shadow-2xl backdrop-blur-xl">
+                <div className="mb-3 flex items-center justify-between">
+                  <h2 className="text-[15px] font-bold text-white/80">Controls</h2>
+                  <button onClick={() => setPanelOpen(false)} aria-label="Close panel" className="text-white/40 transition hover:text-white">
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
                 <div className="relative flex h-[180px] items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-[#0a1122]">
                   <video ref={videoRef} muted playsInline className="absolute inset-0 h-full w-full object-cover" />
                   <canvas ref={overlayRef} className="absolute inset-0 h-full w-full" />
@@ -606,10 +612,10 @@ export default function CapturePage() {
                   </p>
                   <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
                     <Link href="/talk-exercises" onClick={() => handleSave()} className="rounded-full bg-gradient-to-r from-teal-300 to-blue-500 px-6 py-3 text-[14px] font-bold text-black shadow-[0_10px_40px_-10px_rgba(45,212,191,0.7)] transition hover:opacity-90">
-                      Talk with EMO
+                      Done! let&apos;s talk with EMO
                     </Link>
                     <Link href="/community" onClick={() => handleSave()} className="rounded-full border border-white/10 bg-black/50 px-6 py-3 text-[14px] font-semibold text-white/80 backdrop-blur transition hover:bg-white/10">
-                      See Community
+                      Proceed
                     </Link>
                     <button onClick={handleShareReport} className="rounded-full border border-teal-300/40 bg-teal-400/10 px-6 py-3 text-[14px] font-bold text-teal-200 backdrop-blur transition hover:bg-teal-400/20">
                       Share Report Card
@@ -621,18 +627,14 @@ export default function CapturePage() {
             </AnimatePresence>
           </div>
 
-          {/* Sidebar toggle — placed OUTSIDE overflow container so it's always visible */}
-          {!done && (
+          {/* Sidebar toggle — ONLY shown when panel is closed */}
+          {!done && !panelOpen && (
             <button
-              onClick={() => setPanelOpen((p) => !p)}
-              className={`absolute top-1/2 z-30 -translate-y-1/2 flex items-center justify-center rounded-full backdrop-blur-md transition-all ${
-                panelOpen
-                  ? "left-[288px] h-9 w-9 border border-white/20 bg-[#0d1429]/90 text-white/70 hover:bg-white/15"
-                  : "left-4 h-12 w-12 border-2 border-teal-300/60 bg-[#0d1429]/95 text-teal-200 shadow-[0_0_24px_rgba(34,211,238,0.4)] hover:bg-teal-400/20"
-              }`}
-              aria-label="Toggle panel"
+              onClick={() => setPanelOpen(true)}
+              className="absolute left-6 top-6 z-30 flex h-11 w-11 items-center justify-center rounded-full border-2 border-teal-300/50 bg-[#0d1429]/95 text-teal-200 shadow-[0_0_24px_rgba(34,211,238,0.4)] backdrop-blur transition-all hover:bg-teal-400/20 animate-pulse"
+              aria-label="Open panel"
             >
-              {panelOpen ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-6 w-6" />}
+              <ChevronRight className="h-6 w-6" />
             </button>
           )}
         </div>

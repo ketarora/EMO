@@ -568,21 +568,7 @@ export default function CapturePage() {
           </AnimatePresence>
 
           <div className="relative flex-1 overflow-hidden">
-            {/* Chevron toggle for sidebar */}
-            {!done && (
-              <button
-                onClick={() => setPanelOpen((p) => !p)}
-                className={`absolute top-1/2 z-10 -translate-y-1/2 flex items-center justify-center rounded-full backdrop-blur transition-all ${
-                  panelOpen
-                    ? "left-2 h-8 w-8 border border-white/15 bg-black/60 text-white/70 hover:bg-white/15"
-                    : "left-3 h-11 w-11 border-2 border-teal-300/50 bg-black/80 text-teal-200 shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:bg-teal-400/20 animate-pulse"
-                }`}
-                aria-label="Toggle panel"
-              >
-                {panelOpen ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-5 w-5" />}
-              </button>
-            )}
-            <div ref={stageRef} className="absolute inset-0 [&>canvas]:h-full [&>canvas]:w-full" />
+            <div ref={stageRef} className="absolute inset-0 [&>canvas]:h-full [&>canvas]:w-full" style={{ zIndex: 0 }} />
             {/* Affirmation text overlay */}
             {started && !done && affirmation && (
               <motion.p
@@ -630,6 +616,21 @@ export default function CapturePage() {
               )}
             </AnimatePresence>
           </div>
+
+          {/* Sidebar toggle — placed OUTSIDE overflow container so it's always visible */}
+          {!done && (
+            <button
+              onClick={() => setPanelOpen((p) => !p)}
+              className={`absolute top-1/2 z-30 -translate-y-1/2 flex items-center justify-center rounded-full backdrop-blur-md transition-all ${
+                panelOpen
+                  ? "left-[288px] h-9 w-9 border border-white/20 bg-[#0d1429]/90 text-white/70 hover:bg-white/15"
+                  : "left-4 h-12 w-12 border-2 border-teal-300/60 bg-[#0d1429]/95 text-teal-200 shadow-[0_0_24px_rgba(34,211,238,0.4)] hover:bg-teal-400/20"
+              }`}
+              aria-label="Toggle panel"
+            >
+              {panelOpen ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-6 w-6" />}
+            </button>
+          )}
         </div>
       </div>
 

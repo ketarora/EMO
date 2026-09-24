@@ -1,0 +1,72 @@
+{
+  "checkins": [
+    {
+      "date": "2026-09-24T12:25:18.634Z",
+      "valence": 2,
+      "energy": 3,
+      "id": "1790252718637-yw512"
+    },
+    {
+      "date": "2026-09-24T12:25:18.836Z",
+      "valence": 2,
+      "energy": 3,
+      "id": "1790252718951-5fecq"
+    }
+  ],
+  "posts": [
+    {
+      "id": "ishaan",
+      "name": "Ishaan",
+      "quote": "grateful for everything today, thanks for asking",
+      "art": "radial-gradient(circle at 50% 55%, rgba(94,234,212,.95) 0%, rgba(13,60,60,.9) 35%, rgba(4,10,18,.98) 72%)",
+      "dot": "bg-teal-300",
+      "likes": 24,
+      "createdAt": "2026-09-24T12:25:18.590Z"
+    },
+    {
+      "id": "ritika",
+      "name": "Ritika",
+      "quote": "was a lot today but sitting with it now",
+      "art": "radial-gradient(circle at 55% 45%, rgba(192,132,252,.9) 0%, rgba(60,10,80,.85) 38%, rgba(5,5,15,.98) 75%)",
+      "dot": "bg-purple-400",
+      "likes": 11,
+      "createdAt": "2026-09-24T12:25:18.593Z"
+    },
+    {
+      "id": "devansh",
+      "name": "Devansh",
+      "quote": "small win, actually took a break at 3pm",
+      "art": "radial-gradient(circle at 50% 55%, rgba(45,212,191,.9) 0%, rgba(8,40,38,.9) 40%, rgba(3,8,14,.98) 75%)",
+      "dot": "bg-teal-400",
+      "likes": 18,
+      "createdAt": "2026-09-24T12:25:18.593Z"
+    },
+    {
+      "id": "ayesha",
+      "name": "Ayesha",
+      "quote": "not sure what this is, just logging it",
+      "art": "radial-gradient(circle at 50% 60%, rgba(147,197,253,.9) 0%, rgba(20,40,90,.85) 42%, rgba(3,6,16,.98) 78%)",
+      "dot": "bg-blue-400",
+      "likes": 6,
+      "createdAt": "2026-09-24T12:25:18.593Z"
+    },
+    {
+      "id": "kabir",
+      "name": "Kabir",
+      "quote": "good day, oddly calm",
+      "art": "radial-gradient(circle at 50% 55%, rgba(125,211,252,.9) 0%, rgba(15,45,70,.88) 42%, rgba(3,7,15,.98) 76%)",
+      "dot": "bg-sky-400",
+      "likes": 9,
+      "createdAt": "2026-09-24T12:25:18.593Z"
+    },
+    {
+      "id": "meher",
+      "name": "Meher",
+      "quote": "heavy morning, better by evening",
+      "art": "radial-gradient(circle at 55% 55%, rgba(168,85,247,.9) 0%, rgba(50,15,80,.85) 42%, rgba(6,4,16,.98) 78%)",
+      "dot": "bg-purple-500",
+      "likes": 14,
+      "createdAt": "2026-09-24T12:25:18.593Z"
+    }
+  ]
+}

@@ -577,7 +577,7 @@ export default function CapturePage() {
             )}
           </AnimatePresence>
 
-          <div className="relative flex-1 overflow-hidden">
+          <div className="absolute inset-0 overflow-hidden">
             <div ref={stageRef} className="absolute inset-0 [&>canvas]:h-full [&>canvas]:w-full" style={{ zIndex: 0 }} />
             {/* Affirmation text overlay */}
             {started && !done && affirmation && (

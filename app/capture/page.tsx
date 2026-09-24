@@ -517,68 +517,72 @@ export default function CapturePage() {
           Look into the camera for a moment — or adjust the sliders yourself.
         </p>
 
-        <div className="relative mt-3 flex-1 overflow-hidden rounded-[26px] border border-white/[0.08] bg-[#070c18]">
-          <AnimatePresence initial={false}>
-            {!done && panelOpen && (
-              <motion.aside key="panel" initial={{ opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.3, ease: "easeOut" }} className="absolute bottom-4 left-4 top-4 z-20 w-[320px] overflow-y-auto rounded-[24px] border border-white/10 bg-[#0a1122]/95 p-5 shadow-2xl backdrop-blur-xl">
-                <div className="mb-3 flex items-center justify-between">
-                  <h2 className="text-[15px] font-bold text-white/80">Controls</h2>
-                  <button onClick={() => setPanelOpen(false)} aria-label="Close panel" className="text-white/40 transition hover:text-white">
-                    <X className="h-5 w-5" />
-                  </button>
-                </div>
-                <div className="relative flex h-[180px] items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-[#0a1122]">
-                  <video ref={videoRef} muted playsInline className="absolute inset-0 h-full w-full object-cover" />
-                  <canvas ref={overlayRef} className="absolute inset-0 h-full w-full" />
-                  {!started && (
-                    <p className="relative px-6 text-center text-[12px] leading-relaxed text-white/60">
-                      Your camera will appear here
-                      <br />
-                      <span className="text-teal-200/80">Press Start when you&apos;re ready</span>
-                    </p>
-                  )}
-                </div>
-
-                <div className="mt-3 grid grid-cols-2 gap-2">
-                  <button onClick={handleStart} disabled={!detRef.current.modelReady} className="rounded-full border border-white/15 bg-white/[0.07] py-2 text-[13px] font-semibold transition hover:bg-white/[0.14] disabled:opacity-50">
-                    Start
-                  </button>
-                  <button onClick={handleFinish} className="rounded-full border border-white/15 bg-white/[0.07] py-2 text-[13px] font-semibold transition hover:bg-white/[0.14]">
-                    Stop
-                  </button>
-                </div>
-
-                <div className="mt-4 space-y-4">
-                  <Slider label="How pleasant does this feel?" hint="Try smiling to see this change" value={valence} display={`${valence.toFixed(1)} · ${valLabel(valence)}`} accent="linear-gradient(90deg,#a855f7,#22d3ee)"
-                    onChange={(v) => { detRef.current.manualV = true; setValence(v); if (engineRef.current) engineRef.current.valence = v; }} />
-                  <Slider label="How much energy is behind it?" hint="Move your hands a little to see this change" value={arousal} display={`${arousal.toFixed(1)} · ${arLabel(arousal)}`} accent="linear-gradient(90deg,#a855f7,#2dd4bf)"
-                    onChange={(v) => { detRef.current.manualA = true; setArousal(v); if (engineRef.current) engineRef.current.arousal = v; }} />
-                </div>
-
-                <p className="mt-3 min-h-[20px] text-[12px] text-teal-200/90">{prompt}</p>
-
-                <div className="grain-soft relative mt-3 overflow-hidden rounded-2xl border border-white/10 bg-[#0a1020] p-5 text-center">
-                  <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/5">
-                    <Lock className="h-5 w-5 text-sky-300" />
-                  </div>
-                  <div className="mt-3 text-[13px] font-bold leading-snug">
-                    Upgrade to unlock
+        <div className="relative mt-3 flex flex-1 overflow-hidden rounded-[26px] border border-white/[0.08] bg-[#070c18]">
+          <motion.div
+            initial={false}
+            animate={{ width: !done && panelOpen ? 320 : 0, opacity: !done && panelOpen ? 1 : 0 }}
+            transition={{ duration: 0.35, ease: "easeOut" }}
+            className="flex-shrink-0 border-r border-white/[0.07] bg-[#0a1122] overflow-hidden z-20"
+          >
+            <div className="w-[320px] h-full p-5 overflow-y-auto">
+              <div className="mb-3 flex items-center justify-between">
+                <h2 className="text-[15px] font-bold text-white/80">Controls</h2>
+                <button onClick={() => setPanelOpen(false)} aria-label="Close panel" className="text-white/40 transition hover:text-white">
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+              <div className="relative flex h-[180px] items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-[#0a1122]">
+                <video ref={videoRef} muted playsInline className="absolute inset-0 h-full w-full object-cover" />
+                <canvas ref={overlayRef} className="absolute inset-0 h-full w-full" />
+                {!started && (
+                  <p className="relative px-6 text-center text-[12px] leading-relaxed text-white/60">
+                    Your camera will appear here
                     <br />
-                    <span className="bg-gradient-to-r from-teal-200 via-sky-300 to-fuchsia-300 bg-clip-text text-transparent">the graph</span>
-                  </div>
-                  <p className="mx-auto mt-2 max-w-[220px] text-[11.5px] leading-snug text-white/50">
-                    Track your valence &amp; energy trajectory across all daily check-ins.
+                    <span className="text-teal-200/80">Press Start when you&apos;re ready</span>
                   </p>
-                  <button className="mt-4 inline-flex w-full items-center justify-center gap-1 rounded-full bg-gradient-to-r from-teal-300 to-blue-500 py-2.5 text-[13px] font-bold text-black transition hover:opacity-90">
-                    Unlock at day 30 <ChevronRight className="h-4 w-4" />
-                  </button>
-                </div>
-              </motion.aside>
-            )}
-          </AnimatePresence>
+                )}
+              </div>
 
-          <div className="absolute inset-0 overflow-hidden">
-            <div ref={stageRef} className="absolute inset-0 [&>canvas]:h-full [&>canvas]:w-full" style={{ zIndex: 0 }} />
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                <button onClick={handleStart} disabled={!detRef.current.modelReady} className="rounded-full border border-white/15 bg-white/[0.07] py-2 text-[13px] font-semibold transition hover:bg-white/[0.14] disabled:opacity-50">
+                  Start
+                </button>
+                <button onClick={handleFinish} className="rounded-full border border-white/15 bg-white/[0.07] py-2 text-[13px] font-semibold transition hover:bg-white/[0.14]">
+                  Stop
+                </button>
+              </div>
+
+              <div className="mt-4 space-y-4">
+                <Slider label="How pleasant does this feel?" hint="Try smiling to see this change" value={valence} display={`${valence.toFixed(1)} · ${valLabel(valence)}`} accent="linear-gradient(90deg,#a855f7,#22d3ee)"
+                  onChange={(v) => { detRef.current.manualV = true; setValence(v); if (engineRef.current) engineRef.current.valence = v; }} />
+                <Slider label="How much energy is behind it?" hint="Move your hands a little to see this change" value={arousal} display={`${arousal.toFixed(1)} · ${arLabel(arousal)}`} accent="linear-gradient(90deg,#a855f7,#2dd4bf)"
+                  onChange={(v) => { detRef.current.manualA = true; setArousal(v); if (engineRef.current) engineRef.current.arousal = v; }} />
+              </div>
+
+              <p className="mt-3 min-h-[20px] text-[12px] text-teal-200/90">{prompt}</p>
+
+              <div className="grain-soft relative mt-3 overflow-hidden rounded-2xl border border-white/10 bg-[#0a1020] p-5 text-center">
+                <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/5">
+                  <Lock className="h-5 w-5 text-sky-300" />
+                </div>
+                <div className="mt-3 text-[13px] font-bold leading-snug">
+                  Upgrade to unlock
+                  <br />
+                  <span className="bg-gradient-to-r from-teal-200 via-sky-300 to-fuchsia-300 bg-clip-text text-transparent">the graph</span>
+                </div>
+                <p className="mx-auto mt-2 max-w-[220px] text-[11.5px] leading-snug text-white/50">
+                  Track your valence &amp; energy trajectory across all daily check-ins.
+                </p>
+                <button className="mt-4 inline-flex w-full items-center justify-center gap-1 rounded-full bg-gradient-to-r from-teal-300 to-blue-500 py-2.5 text-[13px] font-bold text-black transition hover:opacity-90">
+                  Unlock at day 30 <ChevronRight className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Main 3D Canvas Area */}
+          <div className="relative flex-1 overflow-hidden">
+            <div ref={stageRef} className="absolute inset-x-8 bottom-16 top-4 [&>canvas]:h-full [&>canvas]:w-full" style={{ zIndex: 0 }} />
             {/* Affirmation text overlay */}
             {started && !done && affirmation && (
               <motion.p
